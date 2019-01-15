@@ -1,0 +1,4 @@
+[submodule "OCA/connector-interfaces"]
+	path = OCA/connector-interfaces
+	url = git@github.com:OCA/connector-interfaces.git
+	branch = 12.0
