@@ -82,7 +82,7 @@ class Arbeiter():
         print(self.capacitacion)
         print(self.estado)
         print("\n")
-    
+        
     def getRut(self):
         return self.rut
     def getNombre(self):
@@ -101,21 +101,17 @@ class Arbeiter():
         return self.capacitacion
     def getEstado(self):
         return self.estado
+    
 
-def limpiarCeco(palabra):
-    delimitador=" ("
-    n=palabra.find(delimitador)
-    return palabra[0:n]
 
 
 
 def procesaArchivo(archivo):
 
-    #with open(archivo, "r", encoding="utf-8") as f:
-    #   lista = list(csv.reader(f, delimiter=','))
+    with open(archivo, "r", encoding="utf-8") as f:
+       lista = list(csv.reader(f, delimiter=','))
     i=0
     trabajador=[]
-    lista = archivo
     for row in lista:
         j=0
         for col in row: 
@@ -139,7 +135,7 @@ def procesaArchivo(archivo):
                     columnas.append(col)
                     columnas.append("RAZON SOCIAL")
                 else:
-                    trabajador.append(limpiarCeco(col))
+                    trabajador.append(col)
                     ceco=col
                     aux=re.findall('\d+',ceco).pop()
                     trabajador.append(diccionario[aux])
@@ -187,30 +183,19 @@ def muestraTrabajadores(listado,n):
         k=k+1
         if k==n:
             break
-
-
-
-def creaRegistros(self,listado):
-		o_registro=self.env['x_trabajador']
-		#o_cliente=self.env['x_registro']
-		#o_razonsocial=self.env['x_registro']
-		#o_centrocosto=self.env['x_registro']
-		#o_capacitacion=self.env['x_registro']
-		
-		for trabajador in listado:
-			data={
-				'x_name': trabajador.getNombre(),
-				'x_studio_rut': trabajador.getRut(),
-				'x_studio_cliente': trabajador.getCliente(),
-				'x_studio_centro_costo': trabajador.getCentroCosto(),
-				'x_studio_razon_social': trabajador.getRazonSocial(),
-				'x_studio_cargo': trabajador.getCargo(),
-				'x_studio_requiere_firma':trabajador.getFirma(),
-				'x_studio_capacitacion':trabajador.getCapacitacion(),
-				'x_studio_estado':trabajador.getEstado(),}
-			o_registro.create(data)   
-
-    
+            
+def creaRegistros(listado):
+    for trabajador in listado:
+        env['x_registro'].create({'x_name': trabajador.getNombre()})
+        env['x_registro'].create({'x_studio_rut': trabajador.getRut()})
+        env['x_registro'].create({'x_studio_cliente': trabajador.getCliente()})
+        env['x_registro'].create({'x_studio_centro_costo': trabajador.getCentroCosto()})
+        env['x_registro'].create({'x_studio_razon_social': trabajador.getRazonSocial()})
+        env['x_registro'].create({'x_studio_cargo': trabajador.getCargo()})
+        env['x_registro'].create({'x_studio_requiere_firma': trabajador.getFirma()})
+        env['x_registro'].create({'x_studio_capacitacion': trabajador.getCapacitacion()})
+        env['x_registro'].create({'x_studio_estado_capacitacion': trabajador.getEstado()})
+        
 
 
 try:
@@ -236,9 +221,6 @@ class ImportChartAccount(models.TransientModel):
 	File_slect = fields.Binary(string="Select Excel File")
 	import_option = fields.Selection([('csv', 'CSV File'),('xls', 'XLS File')],string='Select',default='csv')
 
-		
-
-	
 	@api.multi
 	def imoport_file(self):
 
@@ -255,20 +237,16 @@ class ImportChartAccount(models.TransientModel):
 				values = {}
 				csv_reader = csv.reader(data_file, delimiter=',')
 				file_reader.extend(csv_reader)
-                                
+
 			except:
 
 				raise Warning(_("Invalid file!"))
 
-			#procesaArchivo(data_file)
-			creaRegistros(self,procesaArchivo(file_reader))
-			#muestraTrabajadores(procesaArchivo(data_file),10)
-                
+				#creaRegistros(procesaArchivo(data_file)
+                procesaArchivo(data_file)
+				muestraTrabajadores(procesaArchivo(data_file),10)
                 
 		#else:
 			#raise Warning(_("Please select any one from xls or csv formate!"))
 
 		return 1
-		
-		
-		

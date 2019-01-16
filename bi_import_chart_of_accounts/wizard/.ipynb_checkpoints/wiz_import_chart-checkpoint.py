@@ -102,10 +102,6 @@ class Arbeiter():
     def getEstado(self):
         return self.estado
 
-def limpiarCeco(palabra):
-    delimitador=" ("
-    n=palabra.find(delimitador)
-    return palabra[0:n]
 
 
 
@@ -139,7 +135,7 @@ def procesaArchivo(archivo):
                     columnas.append(col)
                     columnas.append("RAZON SOCIAL")
                 else:
-                    trabajador.append(limpiarCeco(col))
+                    trabajador.append(col)
                     ceco=col
                     aux=re.findall('\d+',ceco).pop()
                     trabajador.append(diccionario[aux])
@@ -188,29 +184,23 @@ def muestraTrabajadores(listado,n):
         if k==n:
             break
 
-
-
-def creaRegistros(self,listado):
-		o_registro=self.env['x_trabajador']
-		#o_cliente=self.env['x_registro']
-		#o_razonsocial=self.env['x_registro']
-		#o_centrocosto=self.env['x_registro']
-		#o_capacitacion=self.env['x_registro']
-		
-		for trabajador in listado:
-			data={
-				'x_name': trabajador.getNombre(),
-				'x_studio_rut': trabajador.getRut(),
-				'x_studio_cliente': trabajador.getCliente(),
-				'x_studio_centro_costo': trabajador.getCentroCosto(),
-				'x_studio_razon_social': trabajador.getRazonSocial(),
-				'x_studio_cargo': trabajador.getCargo(),
-				'x_studio_requiere_firma':trabajador.getFirma(),
-				'x_studio_capacitacion':trabajador.getCapacitacion(),
-				'x_studio_estado':trabajador.getEstado(),}
-			o_registro.create(data)   
-
-    
+	@api.multi
+    def creaRegistros(self,listado):
+        objeto=self.env['x_registro']
+        for trabajador in listado:
+            data={
+                'x_name': trabajador.getNombre(),
+                'x_studio_rut': trabajador.getRut(),
+                'x_studio_cliente': trabajador.getCliente(),
+                'x_studio_centro_costo': trabajador.getCentroCosto(),
+                'x_studio_razon_social': trabajador.getRazonSocial(),
+                'x_studio_cargo': trabajador.getCargo(),
+                'x_studio_requiere_firma':trabajador.getFirma(),
+                'x_studio_capacitacion':trabajador.getCapacitacion(),
+                'x_studio_estado_capacitacion':trabajador.getEstado(),
+            }
+			objeto.create(data)
+		return true
 
 
 try:
@@ -236,10 +226,9 @@ class ImportChartAccount(models.TransientModel):
 	File_slect = fields.Binary(string="Select Excel File")
 	import_option = fields.Selection([('csv', 'CSV File'),('xls', 'XLS File')],string='Select',default='csv')
 
-		
-
 	
-	@api.multi
+    
+    @api.multi
 	def imoport_file(self):
 
 # -----------------------------
@@ -269,6 +258,3 @@ class ImportChartAccount(models.TransientModel):
 			#raise Warning(_("Please select any one from xls or csv formate!"))
 
 		return 1
-		
-		
-		

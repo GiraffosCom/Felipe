@@ -1,19 +1,10 @@
-# -*- coding: utf-8 -*-
-# Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
-
-import time
-from datetime import datetime
-import tempfile
-import binascii
-import xlrd
-from datetime import date, datetime
-from odoo.exceptions import Warning, UserError
-from odoo import models, fields, exceptions, api, _
-import logging
-_logger = logging.getLogger(__name__)
-import io
+#%%
 import csv
 import re
+import pandas as pd
+import numpy as np
+import matplotlib as plt
+
 
 
 # Variables locales
@@ -58,6 +49,17 @@ diccionario={
 total=[]
 lista_reducida=[]
 
+class SmallWorker():
+    def __init__(self,rut,cliente,cargo,cerrado,pendiente):
+        
+        self.id=rut+"_"+cliente
+        self.cargo=cargo
+        self.cerrado=cerrado
+        self.pendiente=pendiente
+        self.total=cerrado+pendiente
+        self.p_pend=(pendiente/self.total)*100
+        self.p_cerr=(cerrado/self.total)*100
+
 
 class Arbeiter():
     def __init__(self,rut,nombre,cliente,centrocosto,razonsocial,cargo,requierefirma,capacitacion,estado):
@@ -82,40 +84,14 @@ class Arbeiter():
         print(self.capacitacion)
         print(self.estado)
         print("\n")
-    
-    def getRut(self):
-        return self.rut
-    def getNombre(self):
-        return self.nombre
-    def getCliente(self):
-        return self.cliente
-    def getCentroCosto(self):
-        return self.centrocosto
-    def getRazonSocial(self):
-        return self.razonsocial
-    def getCargo(self):
-        return self.cargo
-    def getFirma(self):
-        return self.requierefirma
-    def getCapacitacion(self):
-        return self.capacitacion
-    def getEstado(self):
-        return self.estado
-
-def limpiarCeco(palabra):
-    delimitador=" ("
-    n=palabra.find(delimitador)
-    return palabra[0:n]
-
 
 
 def procesaArchivo(archivo):
 
-    #with open(archivo, "r", encoding="utf-8") as f:
-    #   lista = list(csv.reader(f, delimiter=','))
+    with open(archivo, "r", encoding="utf-8") as f:
+       lista = list(csv.reader(f, delimiter=','))
     i=0
     trabajador=[]
-    lista = archivo
     for row in lista:
         j=0
         for col in row: 
@@ -139,7 +115,7 @@ def procesaArchivo(archivo):
                     columnas.append(col)
                     columnas.append("RAZON SOCIAL")
                 else:
-                    trabajador.append(limpiarCeco(col))
+                    trabajador.append(col)
                     ceco=col
                     aux=re.findall('\d+',ceco).pop()
                     trabajador.append(diccionario[aux])
@@ -187,88 +163,17 @@ def muestraTrabajadores(listado,n):
         k=k+1
         if k==n:
             break
-
-
-
-def creaRegistros(self,listado):
-		o_registro=self.env['x_trabajador']
-		#o_cliente=self.env['x_registro']
-		#o_razonsocial=self.env['x_registro']
-		#o_centrocosto=self.env['x_registro']
-		#o_capacitacion=self.env['x_registro']
-		
-		for trabajador in listado:
-			data={
-				'x_name': trabajador.getNombre(),
-				'x_studio_rut': trabajador.getRut(),
-				'x_studio_cliente': trabajador.getCliente(),
-				'x_studio_centro_costo': trabajador.getCentroCosto(),
-				'x_studio_razon_social': trabajador.getRazonSocial(),
-				'x_studio_cargo': trabajador.getCargo(),
-				'x_studio_requiere_firma':trabajador.getFirma(),
-				'x_studio_capacitacion':trabajador.getCapacitacion(),
-				'x_studio_estado':trabajador.getEstado(),}
-			o_registro.create(data)   
-
     
 
 
-try:
-	import csv
-except ImportError:
-	_logger.debug('Cannot `import csv`.')
-try:
-	import xlwt
-except ImportError:
-	_logger.debug('Cannot `import xlwt`.')
-try:
-	import cStringIO
-except ImportError:
-	_logger.debug('Cannot `import cStringIO`.')
-try:
-	import base64
-except ImportError:
-	_logger.debug('Cannot `import base64`.')
 
-class ImportChartAccount(models.TransientModel):
-	_name = "import.chart.account"
 
-	File_slect = fields.Binary(string="Select Excel File")
-	import_option = fields.Selection([('csv', 'CSV File'),('xls', 'XLS File')],string='Select',default='csv')
+# muestraTrabajadores(procesaArchivo("Subconjunto(50).csv"),11)
 
-		
 
-	
-	@api.multi
-	def imoport_file(self):
 
-# -----------------------------
-		if self.import_option == 'csv':
 
-			keys = ['code', 'name', 'user_type_id']
 
-			try:
-				csv_data = base64.b64decode(self.File_slect)
-				data_file = io.StringIO(csv_data.decode("utf-8"))
-				#data_file.seek(0)
-				file_reader = []
-				values = {}
-				csv_reader = csv.reader(data_file, delimiter=',')
-				file_reader.extend(csv_reader)
-                                
-			except:
 
-				raise Warning(_("Invalid file!"))
 
-			#procesaArchivo(data_file)
-			creaRegistros(self,procesaArchivo(file_reader))
-			#muestraTrabajadores(procesaArchivo(data_file),10)
-                
-                
-		#else:
-			#raise Warning(_("Please select any one from xls or csv formate!"))
 
-		return 1
-		
-		
-		
