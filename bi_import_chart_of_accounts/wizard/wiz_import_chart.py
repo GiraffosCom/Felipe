@@ -253,7 +253,7 @@ class ImportChartAccount(models.TransientModel):
 				#data_file.seek(0)
 				file_reader = []
 				values = {}
-				csv_reader = csv.reader(data_file, delimiter=',')
+				csv_reader = csv.reader(data_file, delimiter=';')
 				file_reader.extend(csv_reader)
                                 
 			except:
