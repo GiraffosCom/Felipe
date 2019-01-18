@@ -191,7 +191,7 @@ def muestraTrabajadores(listado,n):
 
 
 def creaRegistros(self,listado):
-		o_registro=self.env['x_trabajador']
+		o_registro=self.env['x_registro']
 		#o_cliente=self.env['x_registro']
 		#o_razonsocial=self.env['x_registro']
 		#o_centrocosto=self.env['x_registro']
@@ -206,7 +206,7 @@ def creaRegistros(self,listado):
 				'x_studio_razon_social': trabajador.getRazonSocial(),
 				'x_studio_cargo': trabajador.getCargo(),
 				'x_studio_requiere_firma':trabajador.getFirma(),
-				'x_studio_capacitacion':trabajador.getCapacitacion(),
+				'x_studio_capacitacion_1':trabajador.getCapacitacion(),
 				'x_studio_estado':trabajador.getEstado(),}
 			o_registro.create(data)   
 
@@ -233,8 +233,8 @@ except ImportError:
 class ImportChartAccount(models.TransientModel):
 	_name = "import.chart.account"
 
-	File_slect = fields.Binary(string="Select Excel File")
-	import_option = fields.Selection([('csv', 'CSV File'),('xls', 'XLS File')],string='Select',default='csv')
+	File_slect = fields.Binary(string="Seleccionar Archivo")
+	import_option = fields.Selection([('csv', 'CSV File')],string='Formato',default='csv')
 
 		
 
@@ -253,7 +253,7 @@ class ImportChartAccount(models.TransientModel):
 				#data_file.seek(0)
 				file_reader = []
 				values = {}
-				csv_reader = csv.reader(data_file, delimiter=',')
+				csv_reader = csv.reader(data_file, delimiter=';')
 				file_reader.extend(csv_reader)
                                 
 			except:
