@@ -16,7 +16,7 @@
                 </group>	
 					<footer>
 	
-						<button string="Import" name="imoport_file"
+						<button string="Importar" name="imoport_file"
 							type="object" class="oe_highlight" />
 						<button string="Cancel" class="oe_link" special="cancel" />
 					</footer>
@@ -25,7 +25,7 @@
 		</record>
 
 		<record id="bi_act_chart_of_account" model="ir.actions.act_window">
-			<field name="name">Import Chart Of Accounts</field>
+			<field name="name">Importar archivo</field>
 			<field name="res_model">import.chart.account</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
